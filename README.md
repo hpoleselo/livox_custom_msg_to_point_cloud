@@ -1,16 +1,26 @@
-## Livox_mapping
-Livox_mapping is a mapping package for Livox LiDARs. 
-The package currently contains the basic functions of low-speed mapping.
+## Livox_CustomMsg to PointCloud2 Converter Node
 
-<div align="center">
-    <img src="doc/results/mid40_hall.gif" width = 45% >
-    <img src="doc/results/horizon_parking.gif" width = 45% >
-</div>
+This package is a fork from the Livox-SDK/livox_mapping to provide just the conversion from Livox CustomMsg to PointCloud messages as a single ROS package.
 
-Some key issues:
-1. Support multiple livox lidar;
-2. Different feature extraction;
-3. Remove odometry for small FOV situation;
+## Installing and Running the Package
+
+Clone this repository to your catkin workspace and build it standalone:
+
+`$ catkin_make --only-pkg-with-deps livox_pc_converter`
+
+If package isn't findable after catkin make:
+
+`$ rospack find livox_pc_converter`
+
+`$ rosrun livox_pc_converter livox_repub`
+
+Now `CustomMsg` should be republished to another topic `/livox_pcl0` which has the PointCloud2 message format.
+
+If one desires to visualize the point cloud in RViz:
+
+`$ roslaunch livox_ros_driver livox_lidar_rviz.launch`
+
+## TODO: Modify Later
 
 In the development of our package, we reference to LOAM, LOAM_NOTED.
 ## 1. Prerequisites
