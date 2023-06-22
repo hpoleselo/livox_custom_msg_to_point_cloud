@@ -12,6 +12,10 @@ If package isn't findable after catkin make:
 
 `$ rospack find livox_pc_converter`
 
+Run the package as a launch file:
+
+`$ roslaunch livox_pc_converter custom_msg_to_pc2_converter.launch`
+
 `$ rosrun livox_pc_converter livox_repub`
 
 Now `CustomMsg` should be republished to another topic `/livox_pcl0` which has the PointCloud2 message format.
