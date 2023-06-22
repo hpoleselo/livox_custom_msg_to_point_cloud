@@ -1,0 +1,10 @@
+<launch>
+
+  <!-- <arg name="rviz" default="true" /> -->
+
+  <node pkg="livox_pc_converter" type="livox_repub" name="" output="screen">
+    <!-- Changes frame id that will be republished, if desired. -->
+    <param name="frame_id" type="string" value="/os_sensor" />
+  </node>
+
+</launch>

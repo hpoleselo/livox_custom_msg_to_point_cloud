@@ -9,6 +9,9 @@ ros::Publisher pub_pcl_out0, pub_pcl_out1;
 uint64_t TO_MERGE_CNT = 1; 
 constexpr bool b_dbg_line = false;
 std::vector<livox_ros_driver::CustomMsgConstPtr> livox_data;
+
+
+
 void LivoxMsgCbk1(const livox_ros_driver::CustomMsgConstPtr& livox_msg_in) {
   livox_data.push_back(livox_msg_in);
   if (livox_data.size() < TO_MERGE_CNT) return;
@@ -38,20 +41,32 @@ void LivoxMsgCbk1(const livox_ros_driver::CustomMsgConstPtr& livox_msg_in) {
   sensor_msgs::PointCloud2 pcl_ros_msg;
   pcl::toROSMsg(pcl_in, pcl_ros_msg);
   pcl_ros_msg.header.stamp.fromNSec(timebase_ns);
-  pcl_ros_msg.header.frame_id = "/livox";
+
+  // TODO: This will be moved out of the callback function and placed as a class member function
+  // Adds frame_id to be parameterized by launch file so that user can choose
+  // in which frame_id it should be republished to
+  std::string frame_id;
+  ros::param::get("~frame_id", frame_id);
+
+  // If no ros param is set in the launch file, /livox frame_id is default
+  if (frame_id.empty()) {
+      frame_id = "/livox";
+  }
+
+  pcl_ros_msg.header.frame_id = frame_id;
   pub_pcl_out1.publish(pcl_ros_msg);
   livox_data.clear();
 }
 
 int main(int argc, char** argv) {
-  ros::init(argc, argv, "livox_repub");
-  ros::NodeHandle nh;
+    ros::init(argc, argv, "livox_repub");
+    ros::NodeHandle nh;
 
-  ROS_INFO("start livox_repub");
+    ROS_INFO("Livox CustomMsg to PointCloud2 converter node started...");
 
-  ros::Subscriber sub_livox_msg1 = nh.subscribe<livox_ros_driver::CustomMsg>(
-      "/livox/lidar", 100, LivoxMsgCbk1);
-  pub_pcl_out1 = nh.advertise<sensor_msgs::PointCloud2>("/livox_pcl0", 100);
+    ros::Subscriber sub_livox_msg1 = nh.subscribe<livox_ros_driver::CustomMsg>(
+        "/livox/lidar", 100, LivoxMsgCbk1);
+    pub_pcl_out1 = nh.advertise<sensor_msgs::PointCloud2>("/livox_pcl0", 100);
 
-  ros::spin();
+    ros::spin();
 }
